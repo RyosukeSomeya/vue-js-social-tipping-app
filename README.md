@@ -1,5 +1,5 @@
 # vue-js-social-tipping-app
-
+## vue-cli sample app
 ## Project setup
 ```
 npm install
