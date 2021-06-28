@@ -62,9 +62,9 @@
 export default {
     data() {
         return {
-            username: "testuser1",
-            email: "testuser1@mail.com",
-            password: "auth01auth",
+            username: "",
+            email: "",
+            password: "",
         };
     },
     methods: {
