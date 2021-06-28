@@ -8,9 +8,9 @@ export default new Router({
     mode: 'history',
     routes: [
         // {
-        //     path: '/',
-        //     name: 'login',
-        //     component: Login
+        //     // path: '/',
+        //     // name: 'login',
+        //     // component: Login
         // },
         {
             path: '/signup',
