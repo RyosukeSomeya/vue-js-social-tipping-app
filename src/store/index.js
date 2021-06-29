@@ -14,11 +14,12 @@ export default new Vuex.Store({
                     response.user.updateProfile({
                         displayName: authData.username
                     }).then(() => {
-                        // 確認用 ※レビュー後削除
+                        // 確認用 ※ダッシュボードへの遷移を実装時に削除
                         const user = firebase.auth().currentUser;
                         alert(`登録完了しました。\n
                             名前: ${user.displayName}\n
-                            email: ${user.email}\n`);
+                            email: ${user.email}\n`
+                        );
                         // router.push('/');
                     }).catch((error) => {
                         console.log(error)
@@ -26,21 +27,27 @@ export default new Vuex.Store({
                 })
                 .catch((error) => {
                     alert(`新規ユーザー登録に失敗しました。\n
-                    Code: ${error.code}\n
-                    Message: ${error.message}`, )
+                        Code: ${error.code}\n
+                        Message: ${error.message}`
+                    );
                 });
         },
         login(commit, authData) {
             firebase.auth().signInWithEmailAndPassword(authData.email, authData.password)
-                .then((response) => {
-                    // 確認用 ※レビュー後削除
-                    alert('ログインしました。', response.user.displayName);
+                .then(() => {
+                    // 確認用 ※ダッシュボードへの遷移を実装時に削除
+                    const user = firebase.auth().currentUser;
+                    alert(`ログインしました。\n
+                        ${user.displayName}\n
+                        ${user.email}\n
+                    `);
                     // router.push('/');
                 })
                 .catch((error) => {
                     alert(`ログインに失敗しました。\n
-                    Code: ${error.code}\n
-                    Message: ${error.message}`, )
+                        Code: ${error.code}\n
+                        Message: ${error.message}`
+                    );
                 });
         },
     },
