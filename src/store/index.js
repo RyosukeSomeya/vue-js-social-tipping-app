@@ -25,8 +25,23 @@ export default new Vuex.Store({
                     });
                 })
                 .catch((error) => {
-                    console.log(error)
+                    alert(`新規ユーザー登録に失敗しました。\n
+                    Code: ${error.code}\n
+                    Message: ${error.message}`, )
                 });
-        }
+        },
+        login(commit, authData) {
+            firebase.auth().signInWithEmailAndPassword(authData.email, authData.password)
+                .then((response) => {
+                    // 確認用 ※レビュー後削除
+                    alert('ログインしました。', response.user.displayName);
+                    // router.push('/');
+                })
+                .catch((error) => {
+                    alert(`ログインに失敗しました。\n
+                    Code: ${error.code}\n
+                    Message: ${error.message}`, )
+                });
+        },
     },
 });

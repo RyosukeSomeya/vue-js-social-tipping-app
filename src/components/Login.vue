@@ -1,21 +1,7 @@
 <template>
     <div class="columns is-centered">
         <div class="box column is-two-fifths mt-6">
-            <h1 class="h1 mb-4 is-size-4">新規登録画面</h1>
-            <div class="field is-horizontal">
-                <div class="field-label is-normal">
-                    <label for="username" class="label">ユーザー名：</label>
-                </div>
-                <div class="field-body">
-                    <div class="field">
-                        <div class="control">
-                            <div class="is-fullwidth">
-                            <input class="input" type="text" name="nusername" id="username" v-model="username">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <h1 class="h1 mb-4 is-size-4">ログイン</h1>
             <div class="field is-horizontal">
                 <div class="field-label is-normal is-flex-wrap-nowrap">
                     <label for="email" class="label">メールアドレス：</label>
@@ -47,10 +33,10 @@
 
             <div class="field">
                 <div class="control mb-4">
-                    <input class="button is-primary" type="submit" value="新規登録" @click="signup">
+                    <input class="button is-primary" type="submit" value="ログイン" @click="login">
                 </div>
                 <div class="control">
-                    <router-link to="/login">ログインはこちらから</router-link>
+                    <router-link to="/signup">新規登録はこちらから</router-link>
                 </div>
             </div>
         </div>
@@ -62,19 +48,16 @@
 export default {
     data() {
         return {
-            username: '',
             email: '',
             password: '',
         };
     },
     methods: {
-        signup() {
-            this.$store.dispatch('signup', {
-                username: this.username,
+        login() {
+            this.$store.dispatch('login', {
                 email: this.email,
                 password: this.password
             })
-            this.username = '';
             this.email = '';
             this.password = '';
         }
