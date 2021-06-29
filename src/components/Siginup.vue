@@ -62,13 +62,13 @@
 export default {
     data() {
         return {
-            username: "",
-            email: "",
-            password: "",
+            username: '',
+            email: '',
+            password: '',
         };
     },
     methods: {
-        signup: function() {
+        signup() {
             this.$store.dispatch('signup', {
                 username: this.username,
                 email: this.email,
