@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import createPersistedState from "vuex-persistedstate"; // storeの保持
 import router from '../router';
 import firebase from "firebase/app";
 import "firebase/auth"; // 認証ユーザーを作成・管理
@@ -8,6 +9,7 @@ import "firebase/firestore"; // ユーザーデータを作成・管理
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+    plugins: [createPersistedState({storage: window.sessionStorage})],
     state: {
         uid: '',
         name: '',
@@ -15,9 +17,7 @@ export default new Vuex.Store({
     },
     getters: {
         name: state => state.name,
-        userCoins: state => {
-            return state.coins;
-        },
+        userCoins: state => state.coins
     },
     mutations: {
         setUser(state, { uid, name }) {
