@@ -24,20 +24,17 @@ export default new Vuex.Store({
             state.uid = uid;
             state.name = name;
         },
-        setUserCoins(state) {
-            const data = firebase.firestore().collection('users').where('uid', '==', state.uid).get();
-            data.then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                    state.coins = doc.data().coin
-                });
-            })
-            .catch((error) => {
-                console.log('コイン残高の取得に失敗しました。: ', error);
-            });
+        setUserCoins(state, coins){
+            state.coins = coins
+        },
+        resetState(state) {
+            state.uid = ''
+            state.name = ''
+            state.coins = 0
         }
     },
     actions: {
-        signup({ commit }, authData) {
+        signup({ commit, dispatch }, authData) {
             firebase.auth().createUserWithEmailAndPassword(authData.email, authData.password)
                 .then((userCredential) => {
                     const user = userCredential.user;
@@ -52,10 +49,9 @@ export default new Vuex.Store({
                             // stateにユーザー情報をセット
                             commit('setUser', {
                                 uid: user.uid,
-                                name: user.displayName
+                                name: user.displayName,
                             });
-                            // stateにユーザーのコイン残高をセット
-                            commit('setUserCoins');
+                            dispatch('getUserCoins', user.uid);
                             router.push({
                                 name: 'dashboard',
                                 params: {
@@ -79,7 +75,7 @@ export default new Vuex.Store({
                     );
                 });
         },
-        login({ commit }, authData) {
+        login({ commit, dispatch }, authData) {
             firebase.auth().signInWithEmailAndPassword(authData.email, authData.password)
                 .then((userCredential) => {
                     const user = userCredential.user
@@ -89,8 +85,7 @@ export default new Vuex.Store({
                             uid: user.uid,
                             name: user.displayName
                         });
-                        // stateにユーザーのコイン残高をセット
-                        commit('setUserCoins');
+                        dispatch('getUserCoins', user.uid);
                         router.push({
                             name: 'dashboard',
                             params: {
@@ -107,6 +102,27 @@ export default new Vuex.Store({
                         Message: ${error.message}`
                     );
                 });
+        },
+        signout({ commit }) {
+            firebase.auth().signOut().then(() => {
+                commit('resetState')
+                // セッションストレージを削除
+                window.sessionStorage.removeItem('vuex');
+                alert('ログアウトしました');
+            }).catch((error) => {
+                alert(`ログアウトに失敗しました\n${error.message}`);
+            });
+        },
+        getUserCoins({ commit }, uid) {
+            const data = firebase.firestore().collection('users').where('uid', '==', uid).get();
+            data.then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    commit('setUserCoins', doc.data().coin);
+                });
+            })
+            .catch((error) => {
+                console.log('コイン残高の取得に失敗しました。: ', error);
+            });
         },
     },
 });
