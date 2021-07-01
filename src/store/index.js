@@ -1,10 +1,10 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import createPersistedState from "vuex-persistedstate"; // storeの保持
+import createPersistedState from 'vuex-persistedstate'; // storeの保持
 import router from '../router';
-import firebase from "firebase/app";
-import "firebase/auth"; // 認証ユーザーを作成・管理
-import "firebase/firestore"; // ユーザーデータを作成・管理
+import firebase from 'firebase/app';
+import 'firebase/auth'; // 認証ユーザーを作成・管理
+import 'firebase/firestore'; // ユーザーデータを作成・管理
 
 Vue.use(Vuex);
 
@@ -25,14 +25,14 @@ export default new Vuex.Store({
             state.name = name;
         },
         setUserCoins(state) {
-            const data = firebase.firestore().collection("users").where("uid", "==", state.uid).get();
+            const data = firebase.firestore().collection('users').where('uid', '==', state.uid).get();
             data.then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
                     state.coins = doc.data().coin
                 });
             })
             .catch((error) => {
-                console.log("コイン残高の取得に失敗しました。: ", error);
+                console.log('コイン残高の取得に失敗しました。: ', error);
             });
         }
     },
@@ -45,7 +45,7 @@ export default new Vuex.Store({
                         displayName: authData.username
                     }).then(() => {
                         // firestoreに残高管理用のデータを作成
-                        firebase.firestore().collection("users").add({
+                        firebase.firestore().collection('users').add({
                             uid: user.uid,
                             coin: 500
                         }).then(() => {
@@ -57,7 +57,7 @@ export default new Vuex.Store({
                             // stateにユーザーのコイン残高をセット
                             commit('setUserCoins');
                             router.push({
-                                name: "dashboard",
+                                name: 'dashboard',
                                 params: {
                                     id: user.uid,
                                 }
@@ -89,9 +89,10 @@ export default new Vuex.Store({
                             uid: user.uid,
                             name: user.displayName
                         });
+                        // stateにユーザーのコイン残高をセット
                         commit('setUserCoins');
                         router.push({
-                            name: "dashboard",
+                            name: 'dashboard',
                             params: {
                                 id: user.uid,
                             }
