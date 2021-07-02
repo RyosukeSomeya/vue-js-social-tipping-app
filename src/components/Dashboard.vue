@@ -17,14 +17,21 @@
         <div class="mt-6">
             <button class="button is-danger" @click="logout">ログアウト</button>
         </div>
+        <div class="mt-6">
+            <users-list></users-list>
+        </div>
     </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
+import usersList from './Users';
 
 export default {
     props: ['id'],
+    components: {
+        'users-list': usersList
+    },
     computed: {
         ...mapGetters(['name', 'userCoins']),
     },

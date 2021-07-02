@@ -6,6 +6,8 @@ import Dashboard from './components/Dashboard';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 
+// const { isNavigationFailure, NavigationFailureType } = Router;
+
 Vue.use(Router);
 
 export default new Router({
@@ -25,7 +27,7 @@ export default new Router({
                         next();
                     } else {
                         // 認証されている場合、ダッシュボードへ
-                        next({ name: 'dashboard', params: {id: user.uid} });
+                        next({ name: 'dashboard', params: {id: user.uid} })
                     }
                 })
             }
@@ -40,7 +42,7 @@ export default new Router({
                         next();
                     } else {
                         // 認証されている場合、ダッシュボードへ
-                        next({ name: 'dashboard', params: {id: user.uid} });
+                        next({ name: 'dashboard', params: {id: user.uid} })
                     }
                 })
             }
