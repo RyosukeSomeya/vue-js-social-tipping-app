@@ -2,9 +2,6 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
     <router-view></router-view>
-    <!-- <div class="mt-6">
-      <router-view name="users"></router-view>
-    </div> -->
   </div>
 </template>
 

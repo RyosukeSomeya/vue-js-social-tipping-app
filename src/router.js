@@ -6,8 +6,6 @@ import Dashboard from './components/Dashboard';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 
-// const { isNavigationFailure, NavigationFailureType } = Router;
-
 Vue.use(Router);
 
 export default new Router({
