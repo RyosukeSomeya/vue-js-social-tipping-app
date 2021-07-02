@@ -14,6 +14,9 @@
                 </p>
             </div>
         </div>
+        <div class="mt-6">
+            <button class="button is-danger" @click="logout">ログアウト</button>
+        </div>
     </div>
 </template>
 
@@ -23,7 +26,12 @@ import { mapGetters } from 'vuex';
 export default {
     props: ['id'],
     computed: {
-        ...mapGetters(['name', 'userCoins'])
+        ...mapGetters(['name', 'userCoins']),
+    },
+    methods: {
+        logout() {
+            this.$store.dispatch('signout');
+        },
     }
 }
 </script>
