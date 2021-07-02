@@ -25,7 +25,7 @@ export default new Router({
                         next();
                     } else {
                         // 認証されている場合、ダッシュボードへ
-                        next({ name: 'dashboard', params: {id: user.uid} })
+                        next({ name: 'dashboard', params: {id: user.uid} });
                     }
                 })
             }
@@ -40,7 +40,7 @@ export default new Router({
                         next();
                     } else {
                         // 認証されている場合、ダッシュボードへ
-                        next({ name: 'dashboard', params: {id: user.uid} })
+                        next({ name: 'dashboard', params: {id: user.uid} });
                     }
                 })
             }

@@ -81,7 +81,7 @@ export default {
             commit('resetState')
             // セッションストレージを削除
             window.sessionStorage.removeItem('vuex');
-            // router.push({ name: 'login' });
+            router.push({ name: 'login' }).catch(() => {});
             alert('ログアウトしました');
         }).catch((error) => {
             alert(`ログアウトに失敗しました\n${error.message}`);
