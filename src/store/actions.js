@@ -24,12 +24,6 @@ export default {
                         });
                         dispatch('setUserCoins', user.uid);
                         dispatch('setUsersList');
-                        router.push({
-                            name: 'dashboard',
-                            params: {
-                                id: user.uid,
-                            }
-                        }).catch(() => {});
                     })
                 }).catch((error) => {
                     alert(
@@ -59,12 +53,6 @@ export default {
                     });
                     dispatch('setUserCoins', user.uid);
                     dispatch('setUsersList');
-                    router.push({
-                        name: 'dashboard',
-                        params: {
-                            id: user.uid,
-                        }
-                    }).catch(() => {});
                 } else {
                     alert('ログイン中のユーザー情報の取得に失敗しました。');
                 }
