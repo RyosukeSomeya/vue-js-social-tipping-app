@@ -13,6 +13,7 @@ export default new Vuex.Store({
         uid: '',
         name: '',
         coins: 0,
+        users: []
     },
     getters,
     mutations,

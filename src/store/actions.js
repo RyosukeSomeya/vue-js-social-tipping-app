@@ -14,6 +14,7 @@ export default {
                     // firestoreに残高管理用のデータを作成
                     firebase.firestore().collection('users').add({
                         uid: user.uid,
+                        userName: user.displayName,
                         coin: 500
                     }).then(() => {
                         // stateにユーザー情報をセット
@@ -21,13 +22,8 @@ export default {
                             uid: user.uid,
                             name: user.displayName,
                         });
-                        dispatch('getUserCoins', user.uid);
-                        router.push({
-                            name: 'dashboard',
-                            params: {
-                                id: user.uid,
-                            }
-                        });
+                        dispatch('setUserCoins', user.uid);
+                        dispatch('setUsersList');
                     })
                 }).catch((error) => {
                     alert(
@@ -55,13 +51,8 @@ export default {
                         uid: user.uid,
                         name: user.displayName
                     });
-                    dispatch('getUserCoins', user.uid);
-                    router.push({
-                        name: 'dashboard',
-                        params: {
-                            id: user.uid,
-                        }
-                    });
+                    dispatch('setUserCoins', user.uid);
+                    dispatch('setUsersList');
                 } else {
                     alert('ログイン中のユーザー情報の取得に失敗しました。');
                 }
@@ -78,12 +69,13 @@ export default {
             commit('resetState')
             // セッションストレージを削除
             window.sessionStorage.removeItem('vuex');
+            router.push({ name: 'login' }).catch(() => {});
             alert('ログアウトしました');
         }).catch((error) => {
             alert(`ログアウトに失敗しました\n${error.message}`);
         });
     },
-    getUserCoins({ commit }, uid) {
+    setUserCoins({ commit }, uid) {
         const data = firebase.firestore().collection('users').where('uid', '==', uid).get();
         data.then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
@@ -94,4 +86,12 @@ export default {
             console.log('コイン残高の取得に失敗しました。: ', error);
         });
     },
+    setUsersList({ commit }) {
+        const usersList = firebase.firestore().collection('users').get();
+        usersList.then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                commit('setUsers', doc.data());
+            });
+        })
+    }
 }
