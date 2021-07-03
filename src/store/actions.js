@@ -3,6 +3,7 @@ import firebase from 'firebase/app';
 import 'firebase/auth'; // 認証ユーザーを作成・管理
 import 'firebase/firestore'; // ユーザーデータを作成・管理
 
+
 export default {
     signup({ commit, dispatch }, authData) {
         firebase.auth().createUserWithEmailAndPassword(authData.email, authData.password)
@@ -12,7 +13,7 @@ export default {
                     displayName: authData.username
                 }).then(() => {
                     // firestoreに残高管理用のデータを作成
-                    firebase.firestore().collection('users').add({
+                    firebase.firestore().collection('users').doc(user.uid).set({
                         uid: user.uid,
                         userName: user.displayName,
                         coin: 500
@@ -66,7 +67,7 @@ export default {
     },
     signout({ commit }) {
         firebase.auth().signOut().then(() => {
-            commit('resetState')
+            commit('resetAllState');
             // セッションストレージを削除
             window.sessionStorage.removeItem('vuex');
             router.push({ name: 'login' }).catch(() => {});
@@ -76,14 +77,12 @@ export default {
         });
     },
     setUserCoins({ commit }, uid) {
-        const data = firebase.firestore().collection('users').where('uid', '==', uid).get();
-        data.then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                commit('setUserCoins', doc.data().coin);
-            });
+        const data = firebase.firestore().collection('users').doc(uid).get();
+        data.then((doc) => {
+            commit('setUserCoins', doc.data().coin);
         })
         .catch((error) => {
-            console.log('コイン残高の取得に失敗しました。: ', error);
+            alert(`コイン残高の取得に失敗しました。: ${error.message}`);
         });
     },
     setUsersList({ commit }) {
@@ -93,5 +92,52 @@ export default {
                 commit('setUsers', doc.data());
             });
         })
+    },
+    transfer({ commit, dispatch }, transferData) {
+        const db = firebase.firestore().collection('users');
+        const senderUser = firebase.auth().currentUser;
+        const senderUserData = db.doc(senderUser.uid).get();
+        const destinationData = db.doc(transferData.destinationUid).get();
+
+        // 送り先DB内容変更
+        destinationData.then((doc) => {
+            let toUserCoin = null;
+            if (doc.exists) {
+                toUserCoin = doc.data().coin;
+            }
+            if (toUserCoin) {
+                db.doc(transferData.destinationUid).update({
+                    coin:  toUserCoin + Number(transferData.coin)
+                }).then(() => {
+                    // 送り先データのstateをupdate
+                    commit('resetUsersList');
+                    dispatch('setUsersList');
+
+                    // 送り主DB内容変更
+                    senderUserData.then((doc) => {
+                        let currentUserCoin = null;
+                        if (doc.exists) {
+                            currentUserCoin = doc.data().coin;
+                        }
+                        if (currentUserCoin) {
+                            db.doc(senderUser.uid).update({
+                                coin:  currentUserCoin - Number(transferData.coin)
+                            }).then(() => {
+                                // 送り主データのstateをupdate
+                                dispatch('setUserCoins', senderUser.uid);
+                            }).catch((error) => {
+                                alert(
+                                    `送金は成功しましたが、あなたのデータにエラーが起きました。\n
+                                    以下のメッセージを管理者までお問い合わせください。
+                                    \n${error.message}`
+                                );
+                            });
+                        }
+                    }).catch((error) => {
+                        alert(`送金に失敗しました。\n${error.message}`);
+                    });
+                });
+            }
+        });
     }
 }
