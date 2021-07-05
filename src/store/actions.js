@@ -96,32 +96,28 @@ export default {
     async transfer({ commit, dispatch }, transferData) {
         const db = firebase.firestore();
         const senderUser = firebase.auth().currentUser;
-        try {
-            db.runTransaction(async t => {
-                try {
-                    //送金される側
-                    await t.update(db.collection('users').doc(transferData.destinationUid), {
-                        coin: firebase.firestore.FieldValue.increment(Number(transferData.coin))
-                    })
-                //送金する側
-                    await t.update(db.collection('users').doc(senderUser.uid), {
-                        coin: firebase.firestore.FieldValue.increment(-Number(transferData.coin))
-                        // エラー確認用
-                        // coin: () => {
-                        //     throw 'error';
-                        // }
-                    })
-                } catch(error) {
-                    alert(`送金に失敗しました。\n${error.message}`)
-                }
+
+        db.runTransaction(async t => {
+            //送金される側
+            await t.update(db.collection('users').doc(transferData.destinationUid), {
+                coin: firebase.firestore.FieldValue.increment(Number(transferData.coin))
             })
-        } catch(error) {
+            //送金する側
+            await t.update(db.collection('users').doc(senderUser.uid), {
+                coin: firebase.firestore.FieldValue.increment(-Number(transferData.coin))
+                // エラー確認用
+                // coin: () => {
+                //     throw 'error';
+                // }
+            })
+        }).then(() => {
+            // 送り先データのstateをupdate
+            commit('resetUsersList');
+            dispatch('setUsersList');
+            // 送り主データのstateをupdate
+            dispatch('setUserCoins', senderUser.uid);
+        }).catch((error) => {
             alert(`送金処理に失敗しました。\n${error.message}`)
-        }
-        // 送り先データのstateをupdate
-        commit('resetUsersList');
-        dispatch('setUsersList');
-        // 送り主データのstateをupdate
-        dispatch('setUserCoins', senderUser.uid);
+        });
     }
 }
