@@ -93,51 +93,35 @@ export default {
             });
         })
     },
-    transfer({ commit, dispatch }, transferData) {
-        const db = firebase.firestore().collection('users');
+    async transfer({ commit, dispatch }, transferData) {
+        const db = firebase.firestore();
         const senderUser = firebase.auth().currentUser;
-        const senderUserData = db.doc(senderUser.uid).get();
-        const destinationData = db.doc(transferData.destinationUid).get();
-
-        // 送り先DB内容変更
-        destinationData.then((doc) => {
-            let toUserCoin = null;
-            if (doc.exists) {
-                toUserCoin = doc.data().coin;
-            }
-            if (toUserCoin) {
-                db.doc(transferData.destinationUid).update({
-                    coin:  toUserCoin + Number(transferData.coin)
-                }).then(() => {
-                    // 送り先データのstateをupdate
-                    commit('resetUsersList');
-                    dispatch('setUsersList');
-
-                    // 送り主DB内容変更
-                    senderUserData.then((doc) => {
-                        let currentUserCoin = null;
-                        if (doc.exists) {
-                            currentUserCoin = doc.data().coin;
-                        }
-                        if (currentUserCoin) {
-                            db.doc(senderUser.uid).update({
-                                coin:  currentUserCoin - Number(transferData.coin)
-                            }).then(() => {
-                                // 送り主データのstateをupdate
-                                dispatch('setUserCoins', senderUser.uid);
-                            }).catch((error) => {
-                                alert(
-                                    `送金は成功しましたが、あなたのデータにエラーが起きました。\n
-                                    以下のメッセージを管理者までお問い合わせください。
-                                    \n${error.message}`
-                                );
-                            });
-                        }
-                    }).catch((error) => {
-                        alert(`送金に失敗しました。\n${error.message}`);
-                    });
-                });
-            }
-        });
+        try {
+            db.runTransaction(async t => {
+                try {
+                    //送金される側
+                    await t.update(db.collection('users').doc(transferData.destinationUid), {
+                        coin: firebase.firestore.FieldValue.increment(Number(transferData.coin))
+                    })
+                //送金する側
+                    await t.update(db.collection('users').doc(senderUser.uid), {
+                        coin: firebase.firestore.FieldValue.increment(-Number(transferData.coin))
+                        // エラー確認用
+                        // coin: () => {
+                        //     throw 'error';
+                        // }
+                    })
+                } catch(error) {
+                    alert(`送金に失敗しました。\n${error.message}`)
+                }
+            })
+        } catch(error) {
+            alert(`送金処理に失敗しました。\n${error.message}`)
+        }
+        // 送り先データのstateをupdate
+        commit('resetUsersList');
+        dispatch('setUsersList');
+        // 送り主データのstateをupdate
+        dispatch('setUserCoins', senderUser.uid);
     }
 }

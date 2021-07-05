@@ -9,6 +9,8 @@ Vue.config.productionTip = false;
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+// 認証の永続性をセッションに合わせる
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
 
 new Vue({
   router,
