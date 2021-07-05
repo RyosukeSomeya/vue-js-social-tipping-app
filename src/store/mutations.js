@@ -11,10 +11,13 @@ export default {
             state.users.push(user);
         }
     },
-    resetState(state) {
+    resetUsersList(state) {
+        state.users = [];
+    },
+    resetAllState(state) {
         state.uid = '';
         state.name = '';
         state.coins = 0;
         state.users = [];
-    }
+    },
 }

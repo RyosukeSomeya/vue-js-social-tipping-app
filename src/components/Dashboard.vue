@@ -18,7 +18,7 @@
             <button class="button is-danger" @click="logout">ログアウト</button>
         </div>
         <div class="mt-6">
-            <users-list></users-list>
+            <users-list :userCoins="userCoins"></users-list>
         </div>
     </div>
 </template>
