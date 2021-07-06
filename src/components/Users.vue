@@ -91,7 +91,7 @@ export default {
             this.modalUserName = user.userName;
             this.modalCoinAmount = user.coin;
             this.walletIsShow = true;
-        },
+    },
         closeWallet() {
             this.walletIsShow = false;
         },
